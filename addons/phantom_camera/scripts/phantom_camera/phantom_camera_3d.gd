@@ -523,6 +523,9 @@ var _target_transform: Transform3D
 var _transform_output: Transform3D
 var _transform_noise: Transform3D
 
+var _confiner_bounds_min: Vector3
+var _confiner_bounds_max: Vector3
+
 # NOTE - Temp solution until Godot has better plugin autoload recognition out-of-the-box.
 var _phantom_camera_manager: Node
 
@@ -824,6 +827,10 @@ func _follow(delta: float) -> void:
 
 		FollowMode.SIMPLE:
 			_target_transform.origin = _get_target_position_offset()
+			if _confiner_bounds_min != _confiner_bounds_max:
+				_target_transform.origin.x = clamp(_target_transform.origin.x, _confiner_bounds_min.x, _confiner_bounds_max.x)
+				_target_transform.origin.y = clamp(_target_transform.origin.y, _confiner_bounds_min.y, _confiner_bounds_max.y)
+				_target_transform.origin.z = clamp(_target_transform.origin.z, _confiner_bounds_min.z, _confiner_bounds_max.z)
 
 		FollowMode.GROUP:
 			if _has_multiple_follow_targets:
@@ -2036,5 +2043,10 @@ func get_class() -> String:
 
 func is_class(value) -> bool:
 	return value == "PhantomCamera3D"
+
+
+func set_confiner_bounds(min: Vector3, max: Vector3) -> void:
+	_confiner_bounds_min = min
+	_confiner_bounds_max = max
 
 #endregion
